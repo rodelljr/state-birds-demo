@@ -21,25 +21,18 @@ fun BirdUI(
     val context = LocalContext.current
     val birds: List<Bird> = getBirds(context)
     val navigator = rememberListDetailPaneScaffoldNavigator<Int>()
-
-    // 1. Create a coroutine scope for suspend navigation events
     val scope = rememberCoroutineScope()
 
-    // 2. The manual BackHandler is removed. NavigableListDetailPaneScaffold handles it internally.
-
-    // 3. Use NavigableListDetailPaneScaffold
     NavigableListDetailPaneScaffold(
         navigator = navigator,
         listPane = {
             AnimatedPane {
-                // 4. Update 'content' to 'contentKey'
                 val selectedIndex = navigator.currentDestination?.contentKey
 
                 BirdList(
                     context = context,
                     selectionState = selectedIndex?.let { SelectionVisibilityState.ShowSelection(it) } ?: SelectionVisibilityState.NoSelection,
                     onIndexClick = { index ->
-                        // 5. Launch suspend navigation function within a coroutine
                         scope.launch {
                             navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, index)
                         }
@@ -49,7 +42,6 @@ fun BirdUI(
         },
         detailPane = {
             AnimatedPane {
-                // 6. Update 'content' to 'contentKey'
                 val selectedIndex = navigator.currentDestination?.contentKey
                 if (selectedIndex != null) {
                     val selectedBird = birds[selectedIndex]
